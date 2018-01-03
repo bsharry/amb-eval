@@ -70,8 +70,8 @@
     (let ((result (analyze-amb (test-statement exp))))
       (result env (lambda (val fail2)
 		    (if val
-			((analyze-amb (if-true exp) env success fail2))
-			((analyze-amb (if-false exp) env success fail2))))
+			((analyze-amb (if-true exp)) env success fail2)
+			((analyze-amb (if-false exp)) env success fail2)))
 	      fail))))
 
 (define (analyze-application exp)
