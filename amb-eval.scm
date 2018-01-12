@@ -8,6 +8,7 @@
 	((assignment? exp) (analyze-assignment exp))
 	((lambda? exp) (analyze-lambda exp))
 	((if? exp) (analyze-if exp))
+	((cond? exp) (analyze-amb (cond->if (cdr exp))))
 	((begin? exp) (analyze-sequence (begin-clause exp)))
 	((amb? exp) (analyze-amb-clause exp))
 	((application? exp) (analyze-application exp))
