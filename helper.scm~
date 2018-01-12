@@ -20,6 +20,9 @@
 (define (assignment? exp)
   (tagged-list exp 'set!))
 
+(define (cond? exp)
+  (tagged-list exp 'cond))
+
 (define (assignment-value exp)
   (caddr exp))
 
@@ -169,3 +172,26 @@
   (amb-eval exp the-global-enviroment (lambda (val fail)
 					(display val))
 	    (lambda () '())))
+
+(define (first-cond exp)
+  (car exp))
+
+(define (rest-cond exp)
+  (cdr exp))
+
+(define (phase-if exp)
+  (car exp))
+
+(define (phase-do exp)
+  (cadr exp))
+
+(define (cond->if exp)
+  (cond ((null? exp) '())
+	((eq? (phase-if (first-cond exp)) 'else)
+	 (phase-do (first-cond exp)))
+	(else 
+	 (list 'if 
+	       (phase-if (first-cond exp))
+	       (phase-do (first-cond exp))
+	       (cond->if (rest-cond exp))))))
+		

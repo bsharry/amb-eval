@@ -187,11 +187,21 @@
 
 (define (cond->if exp)
   (cond ((null? exp) '())
-	((eq? (phase-if (first-cond exp)) 'else)
-	 (phase-do (first-cond exp)))
-	(else 
+	((= (length (first-cond exp)) 2)
+	 (cond 
+	  ((eq? (phase-if (first-cond exp)) 'else)
+	   (phase-do (first-cond exp)))
+	  (else 
 	 (list 'if 
 	       (phase-if (first-cond exp))
 	       (phase-do (first-cond exp))
 	       (cond->if (rest-cond exp))))))
-		
+	((= (length (first-cond exp)) 3)
+	 (if (eq? (cadr (first-cond exp)) '=>)
+	     (list (list 'lambda '(result)
+			 (list 'if 'result
+			       (list (caddr (first-cond exp)) 'result)
+			       (cond->if (rest-cond exp))))
+		   (phase-if (first-cond exp)))
+	     (error "you have something wrong in your cond expression")))))
+	     
